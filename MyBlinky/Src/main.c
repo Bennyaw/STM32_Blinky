@@ -61,6 +61,148 @@ static void MX_GPIO_Init(void);
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
+//GPIO mode is at bit 0 and 1
+typedef enum {
+	GPIO_INPUT = 0,
+	GPIO_OUTPUT,
+	GPIO_ALT_FUNC,
+	GPIO_ANALOG,
+}GPIOMode;
+
+//GPIO output driver type is at bit 2
+typedef enum {
+	GPIO_PUSH_PULL = 0,
+	GPIO_OPEN_DRAIN = 1 << 2,
+}GPIODriverType;
+
+//GPIO output speed is at bit 3 and 4
+typedef enum {
+	GPIO_LOW_SPEED = 0,
+	GPIO_MED_SPEED = 1 << 3,
+	GPIO_HI_SPEED = 2 << 3,
+	GPIO_VERY_HI_SPEED = 3 << 3,
+}GPIOOutSpeed;
+
+//GPIO pull type is at bit 5 and 6
+typedef enum {
+	GPIO_NO_PULL = 0,
+	GPIO_PULL_UP = 1 << 5,
+	GPIO_PULL_DOWN = 2 << 5,
+}GPIOPullType;
+
+typedef enum{
+	GpioPin0  = 0x0001,
+	GpioPin1  = 0x0002,
+	GpioPin2  = 0x0004,
+	GpioPin3  = 0x0008,
+	GpioPin4  = 0x0010,
+	GpioPin5  = 0x0020,
+	GpioPin6  = 0x0040,
+	GpioPin7  = 0x0080,
+	GpioPin8  = 0x0100,
+	GpioPin9  = 0x0200,
+	GpioPin10 = 0x0400,
+	GpioPin11 = 0x0800,
+	GpioPin12 = 0x1000,
+	GpioPin13 = 0x2000,
+	GpioPin14 = 0x4000,
+	GpioPin15 = 0x8000,
+}GpioPin;
+
+typedef volatile uint32_t IoRegister ;
+
+typedef struct GpioRegs GpioRegs;
+struct GpioRegs {
+	IoRegister mode;
+	IoRegister driverType;
+	IoRegister outSpeed;
+	IoRegister pullType;
+	IoRegister inData;
+	IoRegister outData;
+	IoRegister outBits;
+	IoRegister pinLock;
+	IoRegister altFuncLow;
+	IoRegister altFuncHi;
+	};
+
+#define gpioA  ((GpioRegs *)0x40020000)
+#define gpioB  ((GpioRegs *)0x40020400)
+#define gpioC  ((GpioRegs *)0x40020800)
+#define gpioD  ((GpioRegs *)0x40020C00)
+#define gpioE  ((GpioRegs *)0x40021000)
+#define gpioF  ((GpioRegs *)0x40021400)
+#define gpioG  ((GpioRegs *)0x40021800)
+#define gpioH  ((GpioRegs *)0x40021C00)
+#define gpioI  ((GpioRegs *)0x40022000)
+#define gpioJ  ((GpioRegs *)0x40022400)
+#define gpioK  ((GpioRegs *)0x40022800)
+/**
+ * To configure the GPIO pin.
+ *
+ * Input:
+ * 	port 			the port to configure
+ * 	pin				the pin to configure
+ * 	configuration	the configuration setting for the pin
+ *
+ * 	E.g:
+ * 		configureGPIO_Pin(gpioD,GPIOPin0,GPIO_OUTPUT |	 	\
+ * 										 GPIO_OPEN_DRAIN |	\
+ * 										 GPIO_HI_SPEED |	\
+ * 										 GPIO_NO_PULL);
+ *
+ * 						 mode	  driverType  outSpeed	 pullType
+ * 				e.g		0110101    0110101     0110101    0110101
+ * 					  & 0000011	   0000100     0011000    1100000
+ * 						0000001	   0000100	   0010000    0100000
+ * */
+
+void configureGPIO_Pin(GpioRegs *port, GpioPin pins, int configuration)
+{
+	uint32_t tempMode, tempDriverType, tempOutSpeed,tempPullType;
+	uint16_t pinValue;
+	uint16_t pinMask = 0x0001;
+
+	tempMode = configuration & 0x03;
+	tempDriverType = (configuration & 0x04) >> 2;
+	tempOutSpeed = (configuration & 0x18) >> 3;
+	tempPullType = (configuration & 0xC0) >> 5;
+
+	for(int i=0; i<16 ; i++)
+	{
+		pinValue = pinMask & pins;
+
+		if(pinValue)
+		{
+			port->mode &= ~(3 << (i * 2));
+			port->mode |= tempMode << (i * 2);
+
+			port->driverType &= ~(1 << (i * 2));
+			port->driverType |= tempDriverType << i;
+
+			port->outSpeed &= ~(3 << (i * 2));
+			port->outSpeed |= tempOutSpeed << (i * 2);
+
+			port->pullType &= ~(3 << (i * 2));
+			port->pullType |= tempPullType << (i * 2);
+		}
+
+		pinMask = pinMask << 1;
+
+	}
+
+
+}
+/*
+void gpioWritePins(GpioRegs *port, GpioPin pins, int state)
+{
+
+}
+
+void gpioTogglePins(GpioRegs *port, GpioPin pins)
+{
+
+}
+*/
 
 /* USER CODE END 0 */
 
@@ -101,12 +243,16 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  HAL_GPIO_WritePin(GPIOG, Led3_Pin, GPIO_PIN_RESET);
-	  HAL_GPIO_WritePin(GPIOG, Led4_Pin, GPIO_PIN_SET);
-	  HAL_Delay(500);
-	  HAL_GPIO_WritePin(GPIOG, Led3_Pin, GPIO_PIN_SET);
-	  HAL_GPIO_WritePin(GPIOG, Led4_Pin, GPIO_PIN_RESET);
-	  HAL_Delay(500);
+	  if(HAL_GPIO_ReadPin(GPIOA,GPIO_PIN_0))
+	  {
+		  HAL_GPIO_WritePin(GPIOG, Led3_Pin|Led4_Pin, GPIO_PIN_SET);
+	  }
+	  else
+	  {
+		  HAL_GPIO_WritePin(GPIOG, Led3_Pin|Led4_Pin, GPIO_PIN_RESET);
+	  }
+
+
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
@@ -199,6 +345,12 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOG, Led3_Pin|Led4_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin : userButton_Pin */
+  GPIO_InitStruct.Pin = userButton_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(userButton_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : Led3_Pin Led4_Pin */
   GPIO_InitStruct.Pin = Led3_Pin|Led4_Pin;

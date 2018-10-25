@@ -1,6 +1,27 @@
-11:26:28 **** Incremental Build of configuration Debug for project MyBlinky ****
+17:45:46 **** Incremental Build of configuration Debug for project MyBlinky ****
 make all 
-make: Nothing to be done for 'all'.
+Building file: ../Src/main.c
+Invoking: MCU GCC Compiler
+C:\Students\Bennyaw\Blinky\MyBlinky\Debug
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 '-D__weak=__attribute__((weak))' '-D__packed=__attribute__((__packed__))' -DUSE_HAL_DRIVER -DSTM32F429xx -I"C:/Students/Bennyaw/Blinky/MyBlinky/Inc" -I"C:/Students/Bennyaw/Blinky/MyBlinky/Drivers/STM32F4xx_HAL_Driver/Inc" -I"C:/Students/Bennyaw/Blinky/MyBlinky/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy" -I"C:/Students/Bennyaw/Blinky/MyBlinky/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -I"C:/Students/Bennyaw/Blinky/MyBlinky/Drivers/CMSIS/Include"  -Og -g3 -Wall -fmessage-length=0 -ffunction-sections -c -fmessage-length=0 -MMD -MP -MF"Src/main.d" -MT"Src/main.o" -o "Src/main.o" "../Src/main.c"
+../Src/main.c: In function 'configureGPIO_Pin':
+../Src/main.c:189:11: warning: statement with no effect [-Wunused-value]
+   pinMask << 1;
+   ~~~~~~~~^~~~
+Finished building: ../Src/main.c
+ 
+Building target: MyBlinky.elf
+Invoking: MCU GCC Linker
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -specs=nosys.specs -specs=nano.specs -T"../STM32F429ZITx_FLASH.ld" -Wl,-Map=output.map -Wl,--gc-sections -o "MyBlinky.elf" @"objects.list"   -lm
+Finished building target: MyBlinky.elf
+ 
+make --no-print-directory post-build
+Generating hex and Printing size information:
+arm-none-eabi-objcopy -O ihex "MyBlinky.elf" "MyBlinky.hex"
+arm-none-eabi-size "MyBlinky.elf"
+   text	   data	    bss	    dec	    hex	filename
+   4676	     20	   1572	   6268	   187c	MyBlinky.elf
+ 
 
-11:26:28 Build Finished (took 340ms)
+17:45:48 Build Finished (took 1s.849ms)
 

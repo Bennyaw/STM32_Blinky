@@ -44,3 +44,9 @@ This warning can be switched off on the Team > Git > Confirmations and Warnings 
 
 !ENTRY fr.ac6.mcu.ide 1 1 2018-10-25 13:12:54.207
 !MESSAGE Started RMI Server, listening on port 21112
+
+!ENTRY org.eclipse.launchbar.core 2 0 2018-10-25 14:04:05.920
+!MESSAGE Enablement expression is missing for descriptor type org.eclipse.cdt.debug.core.coreBuildDescriptorType
+
+!ENTRY org.eclipse.launchbar.core 2 0 2018-10-25 14:04:05.920
+!MESSAGE Enablement expression is missing for config provider for org.eclipse.cdt.debug.core.coreBuildDescriptorType
