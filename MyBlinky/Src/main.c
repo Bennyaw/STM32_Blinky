@@ -176,7 +176,7 @@ void configureGPIO_Pin(GpioRegs *port, GpioPin pins, int configuration)
 			port->mode &= ~(3 << (i * 2));
 			port->mode |= tempMode << (i * 2);
 
-			port->driverType &= ~(1 << (i * 2));
+			port->driverType &= ~(1 << (i));
 			port->driverType |= tempDriverType << i;
 
 			port->outSpeed &= ~(3 << (i * 2));
@@ -186,7 +186,8 @@ void configureGPIO_Pin(GpioRegs *port, GpioPin pins, int configuration)
 			port->pullType |= tempPullType << (i * 2);
 		}
 
-		pinMask = pinMask << 1;
+			pinMask = pinMask << 1;
+
 
 	}
 
@@ -243,6 +244,8 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  configureGPIO_Pin(gpioA,GpioPin3,GPIO_OUTPUT|GPIO_OPEN_DRAIN|GPIO_VERY_HI_SPEED|GPIO_PULL_DOWN);
+	  /*
 	  if(HAL_GPIO_ReadPin(GPIOA,GPIO_PIN_0))
 	  {
 		  HAL_GPIO_WritePin(GPIOG, Led3_Pin|Led4_Pin, GPIO_PIN_SET);
@@ -252,7 +255,7 @@ int main(void)
 		  HAL_GPIO_WritePin(GPIOG, Led3_Pin|Led4_Pin, GPIO_PIN_RESET);
 	  }
 
-
+*/
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
